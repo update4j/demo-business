@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.update4j.LaunchContext;
 import org.update4j.SingleInstanceManager;
-import org.update4j.demo.bootstrap.JavaFxDelegate;
+import org.update4j.inject.InjectTarget;
 import org.update4j.service.Launcher;
 
 import com.jfoenix.controls.JFXButton;
@@ -20,37 +20,50 @@ import com.jfoenix.controls.JFXDialogLayout;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class JavaFxLauncher implements Launcher {
 
 	private static final Path LOCK_DIR = Paths.get(System.getProperty("user.home"), ".update4j-demo");
-	private static Stage primaryStage;
-
-	public static Stage getPrimaryStage() {
-		return primaryStage;
-	}
 
 	@Override
 	public long version() {
 		return 0;
 	}
 
+	@InjectTarget
+	private CheckBox singleInstanceCheckbox;
+
+	@InjectTarget
+	private TextField singleInstanceMessage;
+
+	@InjectTarget
+	private CheckBox newWindowCheckbox;
+
+	@InjectTarget
+	private static Stage primaryStage;
+
+	@InjectTarget
+	private Image inverted;
+
 	@Override
 	public void run(LaunchContext ctx) {
-		if ("true".equals(ctx.getArgs().get(0))) {
+		if (singleInstanceCheckbox.isSelected()) {
 			try {
 				Files.createDirectories(LOCK_DIR);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-			SingleInstanceManager.execute(ctx.getArgs(), args -> {
+			SingleInstanceManager.execute(List.of(singleInstanceMessage.getText()), args -> {
 				ButtonType dismiss = new ButtonType("Dismiss", ButtonData.OK_DONE);
-				Platform.runLater(() -> showDialog("Launcher Message", args.get(1), dismiss));
+				Platform.runLater(() -> showDialog("Launcher Message", args.get(0), dismiss));
 			}, LOCK_DIR);
 
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -67,26 +80,35 @@ public class JavaFxLauncher implements Launcher {
 		Platform.runLater(() -> {
 			// FXML loader should find newly added classes on the dynamic classpath.
 			Thread.currentThread().setContextClassLoader(ctx.getClassLoader());
-			
-			boolean usePrimary = !"true".equals(ctx.getArgs().get(2));
 
-			primaryStage = usePrimary ? JavaFxDelegate.getPrimaryStage() : new Stage();
-			primaryStage.setTitle("Update4j Demo Business");
-			primaryStage.setMinWidth(650);
-			primaryStage.setMinHeight(500);
+			Stage stage;
+
+			stage = newWindowCheckbox.isSelected() ? new Stage() : primaryStage;
+			stage.setTitle("Update4j Demo Business");
+			stage.setMinWidth(650);
+			stage.setMinHeight(500);
 
 			LibraryView libraries = new LibraryView();
 
-			if (!usePrimary) {
-				Scene scene = new Scene(libraries);
-				scene.getStylesheets().setAll(JavaFxDelegate.getPrimaryStage().getScene().getStylesheets());
+			Scene scene = new Scene(libraries);
+			
+			scene.getStylesheets().addAll(primaryStage.getScene().getStylesheets());
+			scene.getStylesheets()
+							.add(JFXButton.class.getResource("/com/jfoenix/assets/css/jfoenix-fonts.css")
+											.toExternalForm());
+			scene.getStylesheets()
+							.add(JFXButton.class.getResource("/com/jfoenix/assets/css/jfoenix-design.css")
+											.toExternalForm());
+			
+			stage.setScene(scene);
 
-				primaryStage.getIcons().setAll(JavaFxDelegate.getPrimaryStage().getIcons());
-				primaryStage.setScene(scene);
-				primaryStage.showAndWait();
-			} else {
-				JavaFxDelegate.getViewStack().push(libraries);
+			if (newWindowCheckbox.isSelected()) {
+				scene.getStylesheets().setAll(primaryStage.getScene().getStylesheets());
+				stage.getIcons().setAll(primaryStage.getIcons());
+
+				stage.showAndWait();
 			}
+
 		});
 
 	}
@@ -100,7 +122,7 @@ public class JavaFxLauncher implements Launcher {
 
 		return false;
 	}
-	
+
 	public static ButtonType showDialog(String header, String message, ButtonType... buttonTypes) {
 		JFXDialogLayout layout = new JFXDialogLayout();
 
@@ -116,7 +138,7 @@ public class JavaFxLauncher implements Launcher {
 
 		ButtonType[] pressed = new ButtonType[1];
 		for (ButtonType type : buttonTypes) {
-			JFXButton b = new JFXButton(type.getText()); //FIXME: toUpperCase()
+			JFXButton b = new JFXButton(type.getText().toUpperCase());
 			b.setDefaultButton(type.getButtonData().isDefaultButton());
 			b.setCancelButton(type.getButtonData().isCancelButton());
 
@@ -130,9 +152,9 @@ public class JavaFxLauncher implements Launcher {
 		layout.setActions(buttons);
 
 		alert.setContent(layout);
-		alert.show((StackPane) getPrimaryStage().getScene().getRoot());
+		alert.show((StackPane) primaryStage.getScene().getRoot());
 
-		JavaFxLauncher.getPrimaryStage().getScene().getRoot().requestFocus();
+		primaryStage.getScene().getRoot().requestFocus();
 
 		return pressed[0];
 	}

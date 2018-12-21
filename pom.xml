@@ -11,7 +11,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.7.0</version>
 				<configuration>
-					<release>9</release>
+					<release>11</release>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -26,16 +26,27 @@
 			<groupId>com.jfoenix</groupId>
 			<artifactId>jfoenix</artifactId>
 			<version>9.0.8</version>
+			<scope>system</scope>
+			<systemPath>C:\Users\morde\eclipse-workspace\demo-business\config\jfoenix-9.0.8.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.controlsfx</groupId>
 			<artifactId>controlsfx</artifactId>
 			<version>9.0.0</version>
+			<systemPath>C:\Users\morde\eclipse-workspace\demo-business\config\controlsfx-9.0.0.jar</systemPath>
+			<scope>system</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jfxtras</groupId>
 			<artifactId>jfxtras-all</artifactId>
 			<version>10.0-r1</version>
+			<scope>system</scope>
+			<systemPath>C:\Users\morde\eclipse-workspace\demo-business\config\jfxtras-all-10.0-r1.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.update4j</groupId>
+			<artifactId>update4j</artifactId>
+			<version>1.3.3</version>
 		</dependency>
 	</dependencies>
 </project>
