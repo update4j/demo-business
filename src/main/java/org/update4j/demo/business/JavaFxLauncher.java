@@ -10,7 +10,9 @@ import java.util.List;
 
 import org.update4j.LaunchContext;
 import org.update4j.SingleInstanceManager;
+import org.update4j.demo.bootstrap.StartupView;
 import org.update4j.inject.InjectTarget;
+import org.update4j.inject.PostInject;
 import org.update4j.service.Launcher;
 
 import com.jfoenix.controls.JFXButton;
@@ -21,6 +23,7 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
@@ -49,8 +52,21 @@ public class JavaFxLauncher implements Launcher {
 	@InjectTarget
 	private static Stage primaryStage;
 
+	/*
+	 * I use @PostInject instead of @InjectTarget to demonstrate how to use it
+	 */
+	private StartupView startup;
+
+	@PostInject
+	private void getStartupView(StartupView view) {
+		startup = view;
+	}
+
 	@InjectTarget
 	private Image inverted;
+
+	private LoadingView loading;
+	private Stage stage;
 
 	@Override
 	public void run(LaunchContext ctx) {
@@ -81,32 +97,38 @@ public class JavaFxLauncher implements Launcher {
 			// FXML loader should find newly added classes on the dynamic classpath.
 			Thread.currentThread().setContextClassLoader(ctx.getClassLoader());
 
-			Stage stage;
-
 			stage = newWindowCheckbox.isSelected() ? new Stage() : primaryStage;
+			loading = new LoadingView();
+
+			startup.getChildren().add(loading);
+			loading.darken();
+
+		});
+
+		LibraryView libs = new LibraryView();
+		Scene scene = new Scene(libs);
+		scene.getStylesheets().addAll(primaryStage.getScene().getStylesheets());
+		scene.getStylesheets()
+				.add(JFXButton.class.getResource("/com/jfoenix/assets/css/jfoenix-fonts.css").toExternalForm());
+		scene.getStylesheets()
+				.add(JFXButton.class.getResource("/com/jfoenix/assets/css/jfoenix-design.css").toExternalForm());
+
+		// We call these methods since it take about 1.5 seconds
+		// to render and locks UI thread.
+		libs.applyCss();
+		libs.layout();
+
+		Platform.runLater(() -> {
 			stage.setTitle("Update4j Demo Business");
 			stage.setMinWidth(650);
 			stage.setMinHeight(500);
 
-			LibraryView libraries = new LibraryView();
-
-			Scene scene = new Scene(libraries);
-			
-			scene.getStylesheets().addAll(primaryStage.getScene().getStylesheets());
-			scene.getStylesheets()
-							.add(JFXButton.class.getResource("/com/jfoenix/assets/css/jfoenix-fonts.css")
-											.toExternalForm());
-			scene.getStylesheets()
-							.add(JFXButton.class.getResource("/com/jfoenix/assets/css/jfoenix-design.css")
-											.toExternalForm());
-			
 			stage.setScene(scene);
 
 			if (newWindowCheckbox.isSelected()) {
-				scene.getStylesheets().setAll(primaryStage.getScene().getStylesheets());
 				stage.getIcons().setAll(primaryStage.getIcons());
-
-				stage.showAndWait();
+				stage.show();
+				primaryStage.hide();
 			}
 
 		});
