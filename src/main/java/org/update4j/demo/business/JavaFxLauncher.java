@@ -23,7 +23,6 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
@@ -50,7 +49,7 @@ public class JavaFxLauncher implements Launcher {
 	private CheckBox newWindowCheckbox;
 
 	@InjectTarget
-	private static Stage primaryStage;
+	private Stage primaryStage;
 
 	/*
 	 * I use @PostInject instead of @InjectTarget to demonstrate how to use it
@@ -66,7 +65,7 @@ public class JavaFxLauncher implements Launcher {
 	private Image inverted;
 
 	private LoadingView loading;
-	private Stage stage;
+	private static Stage stage;
 
 	@Override
 	public void run(LaunchContext ctx) {
@@ -175,9 +174,10 @@ public class JavaFxLauncher implements Launcher {
 		layout.setActions(buttons);
 
 		alert.setContent(layout);
-		alert.show((StackPane) primaryStage.getScene().getRoot());
+		alert.show((StackPane) stage.getScene().getRoot());
 
-		primaryStage.getScene().getRoot().requestFocus();
+		stage.getScene().getRoot().requestFocus();
+		stage.toFront();
 
 		return pressed[0];
 	}
