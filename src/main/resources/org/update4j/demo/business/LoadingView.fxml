@@ -12,12 +12,12 @@
       <StackPane id="shadow" fx:id="shadow" prefHeight="150.0" prefWidth="200.0" />
       <VBox alignment="CENTER">
          <children>
-            <ImageView fitHeight="36.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="imageView" fitHeight="36.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@spinner.gif" />
                </image>
             </ImageView>
-            <Label id="loadingLabel" fx:id="loadingLabel" text="Loading..." />
+            <Label fx:id="label" text="Loading..." />
          </children>
       </VBox>
    </children>

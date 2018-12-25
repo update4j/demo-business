@@ -98,10 +98,10 @@ public class JavaFxLauncher implements Launcher {
 			Thread.currentThread().setContextClassLoader(ctx.getClassLoader());
 
 			stage = newWindowCheckbox.isSelected() ? new Stage() : primaryStage;
-			loading = new LoadingView();
+			loading = new LoadingView("Rendering Nodes");
 
 			startup.getChildren().add(loading);
-			loading.darken();
+			loading.show();
 
 		});
 
@@ -109,9 +109,10 @@ public class JavaFxLauncher implements Launcher {
 		Scene scene = new Scene(libs);
 		scene.getStylesheets().addAll(primaryStage.getScene().getStylesheets());
 		scene.getStylesheets()
-				.add(JFXButton.class.getResource("/com/jfoenix/assets/css/jfoenix-fonts.css").toExternalForm());
+						.add(JFXButton.class.getResource("/com/jfoenix/assets/css/jfoenix-fonts.css").toExternalForm());
 		scene.getStylesheets()
-				.add(JFXButton.class.getResource("/com/jfoenix/assets/css/jfoenix-design.css").toExternalForm());
+						.add(JFXButton.class.getResource("/com/jfoenix/assets/css/jfoenix-design.css")
+										.toExternalForm());
 
 		// We call these methods since it take about 1.5 seconds
 		// to render and locks UI thread.

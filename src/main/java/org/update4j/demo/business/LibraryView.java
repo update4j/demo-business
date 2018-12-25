@@ -27,7 +27,7 @@ public class LibraryView extends FXMLView {
 
 	@FXML
 	private GridPane controlsfxContainer;
-	
+
 	@FXML
 	private GridPane jfxtrasContainer;
 
@@ -36,13 +36,12 @@ public class LibraryView extends FXMLView {
 
 	@FXML
 	private BreadCrumbBar<String> breadCrumb;
-	
+
 	@FXML
 	private Slider slider;
-	
+
 	@FXML
 	private SimpleMetroArcGauge gauge;
-
 
 	public LibraryView() {
 		getStylesheets().add(
@@ -70,7 +69,7 @@ public class LibraryView extends FXMLView {
 		toggleSwitch.selectedProperty().addListener((obs, ov, nv) -> {
 			breadCrumb.setSelectedCrumb(crumb3);
 		});
-		
+
 		gauge.valueProperty().bind(slider.valueProperty());
 	}
 
@@ -78,7 +77,5 @@ public class LibraryView extends FXMLView {
 	private void showDialog(ActionEvent evt) {
 		JavaFxLauncher.showDialog("Message", "This is a JFoeniX dialog.", ButtonType.OK);
 	}
-	
-	
 
 }
