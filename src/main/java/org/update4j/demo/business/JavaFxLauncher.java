@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.controlsfx.dialog.CommandLinksDialog;
 import org.update4j.LaunchContext;
 import org.update4j.SingleInstanceManager;
 import org.update4j.demo.bootstrap.StartupView;
@@ -21,6 +22,7 @@ import com.jfoenix.controls.JFXDialogLayout;
 
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
@@ -102,6 +104,12 @@ public class JavaFxLauncher implements Launcher {
 			startup.getChildren().add(loading);
 			loading.show();
 
+			if(Runtime.version().major() >= 12) {
+				new UnsupportedOperationException("the business application fails to run on JDK 12+, as\n"
+						+ "the JFoeniX library does not yet support it.\n"
+						+ "You can follow the migration efforts on Github Issue #67.").printStackTrace();
+				System.exit(1);
+			}
 		});
 
 		LibraryView libs = new LibraryView();
