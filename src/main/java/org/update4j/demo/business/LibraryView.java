@@ -7,6 +7,7 @@ import org.update4j.demo.bootstrap.JavaFxDelegate;
 import org.update4j.demo.bootstrap.TextSeparator;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXSpinner;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,6 +42,9 @@ public class LibraryView extends FXMLView {
 	private Slider slider;
 
 	@FXML
+	private JFXSpinner jfxspinner;
+
+	@FXML
 	private SimpleMetroArcGauge gauge;
 
 	public LibraryView() {
@@ -70,6 +74,7 @@ public class LibraryView extends FXMLView {
 			breadCrumb.setSelectedCrumb(crumb3);
 		});
 
+		jfxspinner.progressProperty().bind(slider.valueProperty().divide(100));
 		gauge.valueProperty().bind(slider.valueProperty());
 	}
 

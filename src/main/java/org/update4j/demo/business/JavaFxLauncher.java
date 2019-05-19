@@ -103,13 +103,6 @@ public class JavaFxLauncher implements Launcher {
 
 			startup.getChildren().add(loading);
 			loading.show();
-
-			if(Runtime.version().major() >= 12) {
-				new UnsupportedOperationException("the business application fails to run on JDK 12+, as\n"
-						+ "the JFoeniX library does not yet support it.\n"
-						+ "You can follow the migration efforts on Github Issue #67.").printStackTrace();
-				System.exit(1);
-			}
 		});
 
 		LibraryView libs = new LibraryView();
