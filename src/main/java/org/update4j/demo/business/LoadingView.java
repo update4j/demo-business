@@ -47,6 +47,7 @@ public class LoadingView extends FXMLView {
 	}
 
 	public void show() {
+		fade.setRate(1);
 		fade.playFromStart();
 	}
 
